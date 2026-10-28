@@ -345,6 +345,8 @@ R.order = ex => {
   /* ex.steps (optionnel) : chaque étape est une carte entière, au lieu de découper ex.answer en mots */
   const words = ex.steps ? ex.steps.slice() : ex.answer.split(/\s+/).map(w => w.replace(/[.,!?;:]+$/, ""));
   const pool = shuffle(words.concat(ex.extra || []));
+  /* Les étapes (ex.steps) sont rédigées en français : on ne les lit que si la voix du cours est française */
+  const sayStep = !ex.steps || /^fr/i.test((C && C.lang) || "");
   stage.innerHTML = `<h2 class="text-2xl sm:text-3xl font-black">${ex.title || (ex.steps ? "Remets dans l'ordre" : "Traduis cette phrase")}</h2>` +
     bubble(`<span class="font-bold text-lg">${ex.prompt || "🇫🇷 " + esc(ex.fr)}</span>`) +
     `<div id="ans" class="answer-area mt-6"></div><div id="bank" class="flex flex-wrap gap-2 justify-center mt-6"></div>`;
@@ -354,7 +356,7 @@ R.order = ex => {
     c.type = "button"; c.className = "chip"; c.textContent = w;
     c.onclick = () => {
       if (L.mode !== "check") return;
-      picked.push(id); c.classList.add("ghost"); speak(w); draw();
+      picked.push(id); c.classList.add("ghost"); if (sayStep) speak(w); draw();
     };
     bank.appendChild(c);
     return c;
@@ -378,7 +380,7 @@ R.order = ex => {
       const ok = ex.steps ? picked.map(id => pool[id]).join("\n") === ex.steps.join("\n") : norm(picked.map(id => pool[id]).join(" ")) === norm(ex.answer);
       ans.querySelectorAll(".chip").forEach(c => { c.classList.add(ok ? "good" : "bad"); c.disabled = true; });
       chips.forEach(c => c.disabled = true);
-      return { ok, answer, say: ex.steps ? ex.steps.join(". ") : ex.answer, showAnswer: true };
+      return { ok, answer, say: ex.steps ? (sayStep ? ex.steps.join(". ") : null) : ex.answer, showAnswer: true };
     }
   };
 };
