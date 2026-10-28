@@ -23,8 +23,10 @@ const hasTTS = "speechSynthesis" in window;
 if (!hasTTS) document.body.classList.add("no-tts");
 function loadVoices() { voices = speechSynthesis.getVoices(); }
 if (hasTTS) { loadVoices(); speechSynthesis.onvoiceschanged = loadVoices; }
-function speak(text, slow) {
+/* force = clic explicite sur un bouton 🔊 : on lit même quand le son est coupé */
+function speak(text, slow, force) {
   if (!hasTTS || !text) return;
+  if (S.muted && !force) return;
   text = text.replace(/∅ \(rien\)/g, "").replace(/…/g, "").replace(/\(.*?\)/g, "");
   speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
@@ -39,7 +41,7 @@ document.addEventListener("click", e => {
   const b = e.target.closest("[data-say]");
   if (!b) return;
   e.stopPropagation(); e.preventDefault();
-  speak(b.dataset.say, b.dataset.slow);
+  speak(b.dataset.say, b.dataset.slow, true);
 }, true);
 
 /* ---------- Effets sonores (Web Audio) ---------- */

@@ -90,7 +90,7 @@ function renderHome() {
   $("#courseIcon").textContent = C.icon;
   $("#courseTitle").textContent = C.title;
   $("#xpTotal").textContent = P.xp;
-  $("#muteBtn").textContent = S.muted ? "🔇" : "🔊";
+  syncMute();
 
   const u = C.unit || {}, banner = $("#banner");
   banner.style.background = C.color;
@@ -167,7 +167,20 @@ $("#guideBtn").onclick = () => openModal(`
   <div class="flex items-center justify-between gap-3"><h2 class="text-xl font-black">📖 Fiche complète · ${esc((C.unit && C.unit.title) || C.title)}</h2>
   <button class="text-2xl text-ink/40 hover:text-ink" onclick="closeModal()" aria-label="Fermer">✕</button></div>
   ${C.LEVELS.map((lv, i) => `<div class="fiche mt-6 pt-4 ${i ? "border-t-2 border-line" : ""}"><div class="text-lg font-black" style="color:${lv.d}">${lv.emoji} ${i + 1}. ${esc(lv.title)}</div>${lv.fiche()}</div>`).join("")}`);
-$("#muteBtn").onclick = () => { S.muted = !S.muted; saveSettings(); renderHome(); };
+/* Le même réglage de son est accessible sur la carte et pendant la leçon */
+function syncMute() {
+  ["#muteBtn", "#lessonMuteBtn"].forEach(id => {
+    $(id).textContent = S.muted ? "🔇" : "🔊";
+    $(id).setAttribute("aria-pressed", String(S.muted));
+  });
+}
+function toggleMute() {
+  S.muted = !S.muted; saveSettings();
+  if (S.muted && window.speechSynthesis) speechSynthesis.cancel();
+  syncMute();
+}
+$("#muteBtn").onclick = toggleMute;
+$("#lessonMuteBtn").onclick = toggleMute;
 $("#resetBtn").onclick = () => openModal(`<div class="text-center"><div class="text-5xl">♻️</div><h2 class="text-xl font-black mt-3">Tout recommencer ?</h2><p class="mt-2">Ton XP et tes niveaux débloqués en <b>${esc(C.title)}</b> seront effacés.</p>
   <div class="mt-5 flex flex-col sm:flex-row gap-3 justify-center"><button class="btn btn-red" onclick="P=emptyProgress();save();closeModal();renderHome()">Réinitialiser</button><button class="btn btn-ghost" onclick="closeModal()">Annuler</button></div></div>`);
 

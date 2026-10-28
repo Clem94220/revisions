@@ -78,7 +78,7 @@ window.COURSES.espagnol = {
   icon: "💃",
   color: "#FF4B4B",
   lang: "es-ES",
-  unit: { label: "Cours 1 et 2 · Espagnol", title: "España y América Latina", sub: "Institutions, territoires, économie, grammaire et vocabulaire" },
+  unit: { label: "Cours 1 à 4 · Espagnol", title: "España y América Latina", sub: "Institutions, territoires, travail, commerce, grammaire et vocabulaire" },
   mascot: "🧑‍🏫",
   matchHint: "Touche un mot espagnol (il est prononcé) puis sa traduction — ou fais-le glisser dessus.",
   levels: [
@@ -348,4 +348,279 @@ window.COURSES.espagnol = {
     }
   ]
 };
+})();
+
+/* =====================================================================
+   COURS 3 — Le marché du travail (séance 3)
+   COURS 4 — Commerce mondial et informalité (séance 4)
+   Ajout des niveaux 7 à 11.
+   ===================================================================== */
+(function () {
+
+const defs = rows => `<table class="w-full text-sm mt-2"><tbody>${rows.map(r => `<tr class="border-t border-line"><td class="py-2 pr-3 w-2/5 font-bold align-top">${r[0]}</td><td class="py-2 text-ink/80">${r[1]}</td></tr>`).join("")}</tbody></table>`;
+const box = (bg, html) => `<div class="rounded-2xl p-3 mt-2" style="background:${bg}">${html}</div>`;
+const trap = html => box("#FFDFE0", "⚠️ " + html);
+const say = (es, fr) => `<div class="flex items-start gap-2 mt-2">${spk(es, "spk-sm")}<div><i>${esc(es)}</i>${fr ? `<div class="text-sm text-ink/60">${fr}</div>` : ""}</div></div>`;
+/* Tableau à trois colonnes avec écoute du mot espagnol */
+const table3 = (head, rows) => `<div class="overflow-x-auto mt-2"><table class="w-full text-sm"><thead><tr>${head.map(h => `<th class="text-left py-2 pr-3 border-b-2 border-line font-black">${h}</th>`).join("")}</tr></thead><tbody>${rows.map(r => `
+  <tr class="border-t border-line">
+    <td class="py-2 pr-3 align-top"><div class="flex items-center gap-2">${spk(r[0], "spk-sm")}<b>${esc(r[0])}</b></div></td>
+    <td class="py-2 pr-3 align-top">${r[1]}</td>
+    <td class="py-2 align-top text-ink/70">${r[2]}</td>
+  </tr>`).join("")}</tbody></table></div>`;
+
+const OK = { id: "ok", label: "Avance de la reforma", emoji: "✅" }, LIM = { id: "lim", label: "Límite persistente", emoji: "⚠️" };
+const EMP = { id: "emp", label: "Decide la empresa", emoji: "🏢" }, TRA = { id: "tra", label: "Decide el trabajador", emoji: "🙋" };
+const CAU = { id: "cau", label: "Causa", emoji: "🔍" }, CON = { id: "con", label: "Consecuencia", emoji: "➡️" }, OPO = { id: "opo", label: "Oposición", emoji: "↔️" };
+const INT = { id: "int", label: "Introducir", emoji: "🚪" }, ANA = { id: "ana", label: "Añadir", emoji: "➕" }, CONC = { id: "conc", label: "Concluir", emoji: "🏁" };
+const EXPO = { id: "expo", label: "Exporta (materias primas)", emoji: "📤" }, IMPO = { id: "impo", label: "Importa (bienes industriales)", emoji: "📥" };
+const UE = { id: "ue", label: "Intereses de la UE", emoji: "🇪🇺" }, MER = { id: "mer", label: "Intereses del Mercosur", emoji: "🌎" };
+const IND = { id: "ind", label: "+ indicatif", emoji: "📏" }, SUB = { id: "sub", label: "+ subjonctif", emoji: "🌀" };
+
+const FALSOS = [
+  ["la nómina", "La <b>fiche de paie</b> (ou le salaire mensuel)", "Ne veut pas dire « nomination »."],
+  ["despedir", "<b>Licencier</b> un salarié", "Au quotidien : dire au revoir ; en entreprise : rompre le contrat."],
+  ["jubilarse", "<b>Partir à la retraite</b>", "Ne veut pas dire « jubiler » (se réjouir)."],
+  ["la carrera", "Les <b>études supérieures</b> OU la carrière", "« Hacer una carrera » = faire des études universitaires."],
+  ["el becario / la becaria", "Le / la <b>stagiaire</b> en formation", "Vient de <i>beca</i> (bourse), mais désigne l'étudiant en stage."]
+];
+const LEX_3 = [
+  ["el asalariado / la asalariada", "le / la salarié(e)", "Travailleur sous contrat, salaire régulier."],
+  ["el autónomo / la autónoma", "le travailleur indépendant", "Travaille à son compte, sans contrat salarié."],
+  ["la patronal", "le patronat", "Organisations d'employeurs (ex. : CEOE)."],
+  ["el sindicato", "le syndicat", "Défend les droits des salariés (ex. : UGT)."],
+  ["el derecho de huelga", "le droit de grève", "Arrêt concerté du travail."],
+  ["el despido improcedente", "le licenciement abusif", "Sans motif légal valable."],
+  ["dimitir / renunciar", "démissionner", "Rupture à l'initiative du travailleur."],
+  ["el periodo de prueba", "la période d'essai", "Phase pour évaluer les compétences."],
+  ["las 14 pagas", "les 14 mois de salaire", "12 mensualités + 2 primes obligatoires."],
+  ["la precariedad", "la précarité", "Contrats courts et bas salaires."]
+];
+const LEX_4 = [
+  ["la informalidad / la economía sumergida", "l'économie informelle / souterraine", "Activité légale non déclarée."],
+  ["la recaudación fiscal", "les recettes fiscales", "Ce que perçoit le fisc pour les services publics."],
+  ["el arancel", "le droit de douane", "Taxe sur les marchandises importées ou exportées."],
+  ["la relocalización / el nearshoring", "la relocalisation de proximité", "Rapprocher les usines du marché."],
+  ["la cadena de suministro", "la chaîne d'approvisionnement", "De la matière première au client final."],
+  ["la Inversión Extranjera Directa (IED)", "les investissements directs à l'étranger (IDE)", "Capitaux des multinationales dans des filiales."],
+  ["el T-MEC", "l'accord Mexique / États-Unis / Canada", "A remplacé l'ALENA."],
+  ["la base imponible", "l'assiette fiscale", "Montant soumis à l'impôt."],
+  ["la competencia desleal", "la concurrence déloyale", "Avantage obtenu sans les mêmes règles."],
+  ["la deforestación", "la déforestation", "Destruction des forêts (Amazonie)."]
+];
+
+window.COURSES.espagnol.levels.push(
+  /* ================= COURS 3 · NIVEAU 7 ================= */
+  {
+    title: "Cours 3 · El mercado laboral", sub: "Précarité, réforme de 2021, économie informelle", emoji: "💼", c: "#6C63FF", d: "#5148D6",
+    desc: "Les contrats temporaires en Espagne, la Reforma Laboral de 2021 et ses limites, et l'emploi informel en Amérique latine.",
+    fiche: () => `
+      <h3>Espagne : le problème de la précarité</h3>
+      <p class="mt-1">Pendant des décennies, l'Espagne a eu un taux anormalement élevé de <b>contrats temporaires</b> (<i>contratos temporales</i>), enchaînés les uns après les autres. Résultat : les jeunes accèdent tard au logement (<i>alquiler</i>) et à l'autonomie.</p>
+      ${say("Los jóvenes encadenan contratos temporales.", "Les jeunes enchaînent les contrats temporaires.")}
+      <h3>La Reforma Laboral de 2021</h3>
+      ${defs([
+        ["Un accord tripartite", "Signé par le <b>gouvernement</b>, les <b>syndicats</b> (UGT, CCOO) et le <b>patronat</b> (CEOE)."],
+        ["Objectif", "Faire du <b>contrato indefinido</b> (CDI) la norme par défaut."],
+        ["El fijo discontinuo", "Les contrats saisonniers (hôtellerie, restauration, agriculture) deviennent des CDI alternant périodes d'activité et d'inactivité."]
+      ])}
+      ${say("La Reforma Laboral de 2021 hace del contrato indefinido la norma.", "La réforme du travail de 2021 fait du CDI la norme.")}
+      <h3>Les limites</h3>
+      ${defs([
+        ["La précarité change de forme", "Plus de CDI à <b>temps partiel subi</b> (<i>jornadas parciales involuntarias</i>) ou avec très peu d'heures."],
+        ["Le pouvoir d'achat", "Les salaires réels stagnent face à l'inflation et à l'explosion des loyers."],
+        ["El paro juvenil", "Toujours proche de <b>25 %</b> : le <b>double</b> de la moyenne de l'UE."]
+      ])}
+      <h3>Amérique latine : el empleo informal</h3>
+      ${defs([
+        ["Ampleur", "Selon l'<b>OIT</b>, environ <b>50 %</b> de la population active : pas de contrat déclaré, pas de cotisations, pas de protection médicale."],
+        ["Nature", "Ce n'est <b>pas</b> de la délinquance : c'est une <b>stratégie de survie</b>, faute d'emplois formels et parce que créer une entreprise déclarée coûte cher."],
+        ["Pour le travailleur", "Un revenu au jour le jour, mais pas d'assurance chômage, d'arrêt maladie, d'indemnité d'accident ni de retraite."],
+        ["Pour l'État", "Moins de <i>recaudación fiscal</i> : moins d'argent pour l'éducation, les hôpitaux et les infrastructures."]
+      ])}`,
+    ex: [
+      { t: "mcq", prompt: "Quel a été le grand problème du marché du travail espagnol pendant des décennies ?", en: "Durante décadas, España tuvo demasiados contratos temporales.", options: ["Un taux très élevé de contrats temporaires", "Un manque de syndicats", "Des salaires trop élevés", "L'absence totale de chômage"], explain: "<i>demasiados contratos temporales</i> = trop de contrats temporaires, enchaînés et instables." },
+      { t: "fill", sentence: "La Reforma Laboral de 2021 hace del contrato ___ la norma.", fr: "La réforme du travail de 2021 fait du CDI la norme.", options: ["indefinido", "temporal", "parcial", "informal"], explain: "<i>contrato indefinido</i> = contrat à durée indéterminée (CDI)." },
+      { t: "mcq", prompt: "Qui a signé l'<b>accord tripartite</b> de 2021 ?", options: ["Le gouvernement, les syndicats (UGT, CCOO) et le patronat (CEOE)", "Le roi, le Sénat et la BCE", "Les syndicats uniquement", "L'Union européenne et le Mercosur"], explain: "Tripartite = trois parties : <i>el Gobierno</i>, <i>los sindicatos</i> et <i>la patronal</i>." },
+      { t: "match", pairs: [["el contrato temporal", "le contrat temporaire"], ["el contrato indefinido", "le CDI"], ["el sindicato", "le syndicat"], ["la patronal", "le patronat"], ["la precariedad", "la précarité"]] },
+      { t: "spot", words: ["La", "reforma", "de", "2021", "hace", "del", "contrato", "temporal", "la", "norma."], wrong: 7, fix: "La reforma de 2021 hace del contrato indefinido la norma.", explain: "La réforme a justement voulu <b>réduire</b> les contrats temporaires : la norme devient le <i>contrato indefinido</i>." },
+      { t: "mcq", prompt: "Dans quels secteurs le <b>fijo discontinuo</b> a-t-il remplacé les contrats saisonniers ?", options: ["L'hôtellerie, la restauration et l'agriculture", "La banque et l'assurance", "La fonction publique", "L'industrie automobile"], explain: "Ce sont des activités saisonnières : on alterne périodes d'activité et d'inactivité, mais avec un CDI." },
+      { t: "sort", prompt: "Est-ce une <b>avancée</b> de la réforme ou une <b>limite</b> qui persiste ?", cats: [OK, LIM], items: [{ t: "Le CDI devient la norme", c: "ok" }, { t: "Les saisonniers passent en fijo discontinuo", c: "ok" }, { t: "Le chômage des jeunes baisse dans les statistiques", c: "ok" }, { t: "Temps partiel involontaire (jornadas parciales)", c: "lim" }, { t: "Salaires réels qui stagnent face aux loyers", c: "lim" }, { t: "Paro juvenil toujours proche de 25 %", c: "lim" }] },
+      { t: "fill", sentence: "El paro juvenil es el ___ de la media europea.", fr: "Le chômage des jeunes est le double de la moyenne européenne.", options: ["doble", "triple", "mitad", "cuarto"], explain: "Environ <b>25 %</b>, soit le <i>doble</i> (double) de la moyenne de l'UE." },
+      { t: "mcq", prompt: "Selon l'<b>OIT</b>, quelle part de la population active latino-américaine travaille dans l'informel ?", en: "Según la OIT, la mitad de la población activa trabaja en el sector informal.", options: ["Environ 50 %", "Environ 10 %", "Environ 90 %", "Environ 25 %"], explain: "<i>la mitad</i> = la moitié. OIT = Organisation internationale du travail." },
+      { t: "spot", words: ["El", "empleo", "informal", "es", "una", "actividad", "criminal."], wrong: 6, fix: "El empleo informal no es una actividad criminal: es una estrategia de supervivencia.", explain: "L'informalité n'est pas de la délinquance : c'est une <b>stratégie de survie</b> (<i>supervivencia</i>)." },
+      { t: "order", prompt: "Reconstitue le <b>double impact</b> de l'emploi informel.", steps: ["Peu d'emplois formels, entreprise déclarée trop coûteuse", "Travail informel, revenu au jour le jour", "Pas d'assurance chômage, de maladie ni de retraite", "Moins de recaudación fiscal pour l'école, la santé et les infrastructures"], extra: ["Hausse des cotisations sociales"], explain: "Un impact <b>individuel</b> (vulnérabilité) et un impact <b>fiscal</b> (l'État perd des recettes)." },
+      { t: "order", fr: "Les jeunes enchaînent les contrats temporaires.", answer: "Los jóvenes encadenan contratos temporales.", extra: ["indefinidos", "encadena"] }
+    ]
+  },
+
+  /* ================= COURS 3 · NIVEAU 8 ================= */
+  {
+    title: "Cours 3 · Falsos amigos y vocabulario", sub: "Les pièges de vocabulaire du travail", emoji: "🎭", c: "#FF86D0", d: "#D46AAD",
+    desc: "Les faux-amis qui tombent au QCM (nómina, despedir, jubilarse, carrera, becario) et le lexique du travail de la séance 3.",
+    fiche: () => `
+      <h3>Les faux-amis du monde professionnel</h3>
+      ${table3(["Mot espagnol", "Vrai sens", "Piège"], FALSOS)}
+      ${say("Mi padre se jubila este año.", "Mon père part à la retraite cette année.")}
+      ${say("La empresa despidió a diez trabajadores.", "L'entreprise a licencié dix salariés.")}
+      ${say("Mi hermana hace una carrera de Derecho.", "Ma sœur fait des études de droit.")}
+      ${trap("Au QCM, on te proposera exprès le sens « français » : <i>jubilarse</i> ≠ jubiler, <i>nómina</i> ≠ nomination.")}
+      <h3>Lexique de la séance 3</h3>
+      ${table3(["Terme", "Traduction", "Précision"], LEX_3)}`,
+    ex: [
+      { t: "mcq", prompt: "Que signifie « <b>la nómina</b> » ?", en: "Recibo la nómina a final de mes.", options: ["La fiche de paie / le salaire mensuel", "La nomination", "Le nom de famille", "La liste des candidats"], explain: "Faux-ami : <i>la nómina</i> = la fiche de paie. <i>Recibo la nómina</i> = je reçois ma paie." },
+      { t: "mcq", prompt: "« <b>Jubilarse</b> » signifie…", en: "Mi padre se jubila este año.", options: ["Partir à la retraite", "Se réjouir", "Être licencié", "Démissionner"], explain: "Faux-ami : rien à voir avec « jubiler ». <i>Se jubila</i> = il part à la retraite." },
+      { t: "mcq", prompt: "Dans une entreprise, « <b>despedir</b> » signifie…", en: "La empresa despidió a diez trabajadores.", options: ["Licencier", "Accueillir", "Promouvoir", "Payer"], explain: "Au quotidien, <i>despedirse</i> = dire au revoir ; en entreprise, <i>despedir</i> = <b>licencier</b>." },
+      { t: "fill", sentence: "Mi hermana hace una ___ de Derecho en Madrid.", fr: "Ma sœur fait des études de droit à Madrid.", options: ["carrera", "nómina", "beca", "huelga"], explain: "<i>Hacer una carrera</i> = faire des études supérieures." },
+      { t: "match", pairs: [["la nómina", "la fiche de paie"], ["despedir", "licencier"], ["jubilarse", "partir à la retraite"], ["la carrera", "les études supérieures"], ["el becario", "le stagiaire"]] },
+      { t: "spot", words: ["Pedro", "está", "muy", "feliz:", "se", "jubila", "de", "alegría."], wrong: 5, fix: "Pedro está muy feliz: se alegra mucho.", explain: "<i>jubilarse</i> = partir à la retraite. Pour « se réjouir », on dit <i>alegrarse</i>." },
+      { t: "match", pairs: [["el asalariado", "le salarié"], ["el autónomo", "le travailleur indépendant"], ["el derecho de huelga", "le droit de grève"], ["el periodo de prueba", "la période d'essai"], ["dimitir", "démissionner"]] },
+      { t: "mcq", prompt: "Que sont « <b>las 14 pagas</b> » ?", en: "En España, muchos trabajadores cobran catorce pagas.", options: ["12 mensualités + 2 primes obligatoires", "14 jours de congés payés", "14 heures de travail par semaine", "14 contrats temporaires"], explain: "Une pratique espagnole : 12 salaires mensuels + <b>2 primes</b> (<i>pagas extra</i>)." },
+      { t: "sort", prompt: "Qui décide de la rupture du contrat : l'<b>entreprise</b> ou le <b>travailleur</b> ?", cats: [EMP, TRA], items: [{ t: "despedir", c: "emp", en: 1 }, { t: "el despido improcedente", c: "emp", en: 1 }, { t: "el despido", c: "emp", en: 1 }, { t: "dimitir", c: "tra", en: 1 }, { t: "renunciar", c: "tra", en: 1 }, { t: "jubilarse", c: "tra", en: 1 }] },
+      { t: "fill", sentence: "El despido ___ es un despido sin causa justificada.", fr: "Le licenciement abusif est un licenciement sans cause justifiée.", options: ["improcedente", "indefinido", "temporal", "informal"], explain: "<i>el despido improcedente</i> = le licenciement abusif, sans motif légal valable." },
+      { t: "mcq", prompt: "Comment dit-on « <b>le / la stagiaire</b> » ?", options: ["el becario / la becaria", "el jubilado / la jubilada", "el autónomo / la autónoma", "el asalariado / la asalariada"], speakOpts: true, explain: "<i>becario</i> vient de <i>beca</i> (bourse), mais désigne l'étudiant en stage." },
+      { t: "order", fr: "Le stagiaire reçoit une bourse.", answer: "El becario recibe una beca.", extra: ["nómina", "jubila"] }
+    ]
+  },
+
+  /* ================= COURS 3 · NIVEAU 9 ================= */
+  {
+    title: "Cours 3 · Conectores y registro académico", sub: "Structurer et écrire comme à l'université", emoji: "🔗", c: "#2EC4B6", d: "#1FA095",
+    desc: "Les connecteurs pour introduire, ajouter, opposer, expliquer, conclure, et les règles pour passer au registre académique.",
+    fiche: () => `
+      <h3>Les connecteurs formels</h3>
+      ${table3(["Connecteur", "Sens", "Fonction"], [
+        ["En primer lugar / Para empezar", "Tout d'abord / Pour commencer", "Introduire"],
+        ["Cabe señalar que", "Il convient de souligner que", "Introduire"],
+        ["Asimismo / Por otra parte", "De même / Par ailleurs", "Ajouter"],
+        ["No solo… sino también", "Non seulement… mais aussi", "Ajouter"],
+        ["Sin embargo / No obstante", "Cependant / Néanmoins", "Opposer"],
+        ["A pesar de que / Si bien", "Bien que / Même si", "Concéder"],
+        ["Dado que / Ya que / Puesto que", "Étant donné que / Puisque", "Cause"],
+        ["Debido a (+ nom / infinitif)", "En raison de", "Cause"],
+        ["Por consiguiente / Por lo tanto / Así pues", "Par conséquent / Donc / Ainsi", "Conséquence"],
+        ["Es decir / Dicho de otro modo", "C'est-à-dire / Autrement dit", "Reformuler"],
+        ["En definitiva / En suma / A modo de conclusión", "En définitive / En somme / Pour conclure", "Conclure"]
+      ])}
+      <h3>Passer au registre académique</h3>
+      ${defs([
+        ["Mots vagues → mots précis", "<i>cosa, hacer</i> → <i>factor, reto, implementar, promulgar</i>"],
+        ["Pas d'exagération orale", "<i>un montón de problemas</i> → <i>múltiples desafíos estructurales, numerosos obstáculos</i>"],
+        ["Objectiver", "<i>el autor dice que…</i> → <i>el investigador sostiene / demuestra que…</i>"]
+      ])}
+      ${say("El paro ha bajado; sin embargo, sigue siendo muy alto.", "Le chômage a baissé ; cependant, il reste très élevé.")}
+      ${say("Existen múltiples desafíos estructurales.", "Il existe de multiples défis structurels.")}`,
+    outro: () => `<div class="mt-8"><h2 class="font-black text-lg">📌 À retenir du cours 3</h2>${defs([
+      ["Espagne", "Contrats temporaires → <b>Reforma Laboral 2021</b> (Gobierno + UGT, CCOO + CEOE) → contrato indefinido + fijo discontinuo. Limites : temps partiel subi, salaires, paro juvenil ~25 % (double de l'UE)."],
+      ["Amérique latine", "~50 % d'informel (OIT) = stratégie de survie, pas délinquance → pas de protection et moins de recaudación fiscal."],
+      ["Faux-amis", "nómina = fiche de paie · despedir = licencier · jubilarse = retraite · carrera = études · becario = stagiaire"],
+      ["Connecteurs", "sin embargo (opposition) · por lo tanto (conséquence) · ya que (cause) · es decir (reformulation) · en definitiva (conclusion)"]
+    ])}</div>`,
+    ex: [
+      { t: "sort", prompt: "Ce connecteur exprime-t-il une <b>cause</b>, une <b>conséquence</b> ou une <b>opposition</b> ?", cats: [CAU, CON, OPO], items: [{ t: "dado que", c: "cau", en: 1 }, { t: "ya que", c: "cau", en: 1 }, { t: "por lo tanto", c: "con", en: 1 }, { t: "por consiguiente", c: "con", en: 1 }, { t: "sin embargo", c: "opo", en: 1 }, { t: "no obstante", c: "opo", en: 1 }] },
+      { t: "sort", prompt: "Pour <b>introduire</b>, <b>ajouter</b> ou <b>conclure</b> ?", cats: [INT, ANA, CONC], items: [{ t: "En primer lugar", c: "int", en: 1 }, { t: "Para empezar", c: "int", en: 1 }, { t: "Asimismo", c: "ana", en: 1 }, { t: "Por otra parte", c: "ana", en: 1 }, { t: "En definitiva", c: "conc", en: 1 }, { t: "En suma", c: "conc", en: 1 }] },
+      { t: "match", pairs: [["es decir", "c'est-à-dire"], ["sin embargo", "cependant"], ["por lo tanto", "donc"], ["asimismo", "de même / en outre"], ["a pesar de que", "bien que"]] },
+      { t: "fill", sentence: "El paro ha bajado; ___, sigue siendo muy alto.", fr: "Le chômage a baissé ; cependant, il reste très élevé.", options: ["sin embargo", "por lo tanto", "es decir", "en primer lugar"], explain: "Il y a une <b>opposition</b> entre les deux idées : <i>sin embargo</i> (cependant)." },
+      { t: "fill", sentence: "Los alquileres suben; ___, los jóvenes no se emancipan.", fr: "Les loyers augmentent ; par conséquent, les jeunes ne s'émancipent pas.", options: ["por consiguiente", "sin embargo", "asimismo", "es decir"], explain: "La deuxième idée est le <b>résultat</b> de la première : <i>por consiguiente</i>." },
+      { t: "fill", sentence: "No solo los salarios son bajos, ___ también los alquileres son caros.", fr: "Non seulement les salaires sont bas, mais aussi les loyers sont chers.", options: ["sino", "pero", "que", "y"], explain: "La structure fixe est <b>no solo… sino también</b> (et pas « pero también »)." },
+      { t: "mcq", prompt: "Quelle formulation est la plus <b>académique</b> ?", options: ["Existen múltiples desafíos estructurales.", "Hay un montón de problemas.", "Hay muchas cosas que no van bien.", "Es una cosa muy fea."], speakOpts: true, explain: "On évite <i>un montón</i> (oral) et <i>cosa</i> (vague) : <i>múltiples desafíos estructurales</i>." },
+      { t: "mcq", prompt: "Comment rendre « <b>el autor dice que…</b> » plus académique ?", options: ["El investigador sostiene que…", "El tío dice que…", "El autor habla que…", "El autor cuenta cosas sobre…"], speakOpts: true, explain: "On objective avec un verbe précis : <i>sostiene</i> (soutient), <i>demuestra</i> (démontre)." },
+      { t: "spot", words: ["Hay", "un", "montón", "de", "problemas", "en", "el", "mercado", "laboral."], wrong: 2, fix: "Existen numerosos obstáculos en el mercado laboral.", explain: "<i>un montón</i> est une exagération orale : à l'écrit, <i>numerosos obstáculos</i> ou <i>múltiples desafíos</i>." },
+      { t: "match", pairs: [["una cosa", "un factor / un reto"], ["hacer una ley", "promulgar una ley"], ["hacer un plan", "implementar un plan"], ["un montón de problemas", "múltiples desafíos"], ["el autor dice", "el investigador demuestra"]] },
+      { t: "order", fr: "Tout d'abord, il convient de souligner que le chômage des jeunes est élevé.", answer: "En primer lugar, cabe señalar que el paro juvenil es alto.", extra: ["sin", "embargo"] },
+      { t: "mcq", prompt: "« <b>Debido a</b> » se construit avec…", options: ["un nom ou un infinitif", "« que » + subjonctif", "« que » + indicatif obligatoirement", "un adjectif seul"], explain: "<i>debido a la crisis</i>, <i>debido a tener…</i> : jamais <i>debido a que</i> dans le cours." }
+    ]
+  },
+
+  /* ================= COURS 4 · NIVEAU 10 ================= */
+  {
+    title: "Cours 4 · Comercio, Mercosur y nearshoring", sub: "Commerce mondial et relocalisations", emoji: "🚢", c: "#F59E0B", d: "#C27C06",
+    desc: "Le commerce extérieur latino-américain, le cercle vicieux de l'informalité, l'accord UE-Mercosur et le nearshoring au Mexique.",
+    fiche: () => `
+      <h3>Un commerce extérieur à deux vitesses</h3>
+      ${defs([
+        ["Exportations", "Des <b>matières premières</b> brutes : <i>soja, carne, litio, cobre, petróleo</i>, vers l'Asie, l'Europe et les États-Unis."],
+        ["Importations", "Des <b>biens industriels</b> à forte valeur ajoutée : <i>maquinaria especializada, medicamentos, tecnología</i>."]
+      ])}
+      <h3>Le cercle vicieux de l'informalité</h3>
+      <p class="mt-1">Plus de <b>130 millions</b> de travailleurs sans contrat (plus de 70 % en Bolivie ou au Guatemala) → peu de <i>recaudación tributaria</i> → déficit public → pas de modernisation de l'eau, de l'électricité et de la santé.</p>
+      <h3>L'accord UE-Mercosur</h3>
+      ${defs([
+        ["Le projet", "Une zone de libre-échange entre l'UE et le Mercosur (Argentine, Brésil, Uruguay, Paraguay) : environ <b>800 millions</b> de consommateurs, plus de <b>90 %</b> des droits de douane (<i>aranceles</i>) supprimés."],
+        ["Intérêts de l'UE", "Exporter des véhicules, des biens d'équipement industriels et des produits chimiques."],
+        ["Intérêts du Mercosur", "Exporter viande bovine, volaille, sucre et bioéthanol."],
+        ["Blocages (dont la France)", "<b>Competencia desleal</b> (normes sanitaires, pesticides interdits en Europe, bien-être animal) et <b>deforestación</b> de l'Amazonie (Accord de Paris)."],
+        ["Dates", "<b>1991</b> : Traité d'Asunción (création du Mercosur) · <b>1999</b> : début des négociations avec l'UE · <b>2019</b> : accord de principe, puis blocages écologiques."]
+      ])}
+      <h3>Le nearshoring au Mexique</h3>
+      ${defs([
+        ["Du offshoring au nearshoring", "Tensions géopolitiques et fret transpacifique plus cher : la <b>proximité</b> redevient essentielle."],
+        ["Le nord du Mexique", "Grâce au <b>T-MEC</b> (Mexique, États-Unis, Canada) et à <b>3 140 km</b> de frontière, Nuevo León, Coahuila et Chihuahua attirent les <i>IED</i>."],
+        ["Secteurs", "Semi-conducteurs, batteries, voitures électriques, matériel médical."],
+        ["Avantage", "Livraison aux États-Unis en <b>24-48 heures</b> par la route, au lieu de plusieurs semaines depuis l'Asie."]
+      ])}
+      ${say("El nearshoring acerca las fábricas al mercado de consumo.", "Le nearshoring rapproche les usines du marché de consommation.")}
+      <h3>Lexique de la séance 4</h3>
+      ${table3(["Terme", "Traduction", "Précision"], LEX_4)}`,
+    ex: [
+      { t: "sort", prompt: "L'Amérique latine <b>exporte</b>-t-elle ou <b>importe</b>-t-elle surtout ces produits ?", cats: [EXPO, IMPO], items: [{ t: "la soja", c: "expo", en: 1 }, { t: "la carne", c: "expo", en: 1 }, { t: "el litio", c: "expo", en: 1 }, { t: "la maquinaria especializada", c: "impo", en: 1 }, { t: "los medicamentos", c: "impo", en: 1 }, { t: "la tecnología", c: "impo", en: 1 }] },
+      { t: "mcq", prompt: "Combien de travailleurs latino-américains sont <b>sans contrat ni protection</b> ?", en: "Más de 130 millones de trabajadores no tienen contrato.", options: ["Plus de 130 millions", "Environ 13 millions", "Plus de 800 millions", "Environ 49 millions"], explain: "Plus de <b>130 millions</b>. (800 millions = les consommateurs de la zone UE-Mercosur ; 49 millions = la population de l'Espagne.)" },
+      { t: "order", prompt: "Reconstitue le <b>cercle vicieux budgétaire</b> de l'informalité.", steps: ["Plus de 130 millions de travailleurs informels", "Peu de recaudación tributaria pour l'État", "Un déficit public récurrent", "Pas de modernisation de l'eau, de l'électricité et de la santé"], extra: ["Une baisse des droits de douane"], explain: "Sans impôts, l'État n'a pas les moyens d'investir dans les réseaux publics." },
+      { t: "match", pairs: [["el Mercosur", "Argentine, Brésil, Uruguay, Paraguay"], ["el arancel", "le droit de douane"], ["la competencia desleal", "la concurrence déloyale"], ["la deforestación", "la déforestation"], ["el Tratado de Asunción", "la création du Mercosur (1991)"]] },
+      { t: "fill", sentence: "El acuerdo UE-Mercosur eliminaría más del 90 % de los ___.", fr: "L'accord UE-Mercosur supprimerait plus de 90 % des droits de douane.", options: ["aranceles", "sueldos", "alquileres", "sindicatos"], explain: "<i>los aranceles</i> = les droits de douane. La zone compterait environ 800 millions de consommateurs." },
+      { t: "sort", prompt: "Qui y gagne : l'<b>UE</b> ou le <b>Mercosur</b> ?", cats: [UE, MER], items: [{ t: "Exporter des véhicules", c: "ue" }, { t: "Exporter des biens d'équipement", c: "ue" }, { t: "Exporter des produits chimiques", c: "ue" }, { t: "Vendre de la viande bovine", c: "mer" }, { t: "Vendre du sucre", c: "mer" }, { t: "Vendre du bioéthanol", c: "mer" }] },
+      { t: "order", prompt: "Remets les dates du <b>Mercosur</b> dans l'ordre.", steps: ["1991 : Traité d'Asunción, création du Mercosur", "1999 : début des négociations avec l'UE", "2019 : accord de principe, puis blocages écologiques"], extra: ["2019 : création du Mercosur"], explain: "Le Mercosur naît en <b>1991</b> à Asunción (capitale du Paraguay)." },
+      { t: "mcq", prompt: "Pourquoi la France bloque-t-elle l'accord UE-Mercosur ?", options: ["Concurrence déloyale (normes, pesticides, bien-être animal) et déforestation", "Le Mercosur refuse d'acheter des voitures", "L'accord ne concerne que 8 millions de consommateurs", "La France ne fait pas partie de l'UE"], explain: "Les agriculteurs dénoncent la <i>competencia desleal</i> ; les écologistes, la <i>deforestación</i> de l'Amazonie." },
+      { t: "mcq", prompt: "Qu'est-ce que le <b>nearshoring</b> ?", en: "El nearshoring acerca las fábricas al mercado de consumo.", options: ["Rapprocher la production du marché de consommation", "Délocaliser la production en Asie", "Fermer les usines", "Augmenter les droits de douane"], explain: "C'est l'inverse de l'<i>offshoring</i> asiatique : le Mexique produit à côté des États-Unis." },
+      { t: "fill", sentence: "Desde México, los productos llegan a Estados Unidos en ___ horas.", fr: "Depuis le Mexique, les produits arrivent aux États-Unis en 24 à 48 heures.", options: ["24-48", "2-3", "200-300", "1000"], explain: "Par la route, en <b>24-48 heures</b>, au lieu de plusieurs semaines par bateau depuis l'Asie." },
+      { t: "spot", words: ["El", "T-MEC", "une", "a", "México,", "Estados", "Unidos", "y", "Brasil."], wrong: 8, fix: "El T-MEC une a México, Estados Unidos y Canadá.", explain: "Le T-MEC (qui a remplacé l'ALENA) réunit le Mexique, les États-Unis et le <b>Canada</b>." },
+      { t: "match", pairs: [["la cadena de suministro", "la chaîne d'approvisionnement"], ["la Inversión Extranjera Directa", "les IDE"], ["la base imponible", "l'assiette fiscale"], ["la economía sumergida", "l'économie souterraine"], ["la relocalización", "la relocalisation"]] }
+    ]
+  },
+
+  /* ================= COURS 4 · NIVEAU 11 ================= */
+  {
+    title: "Cours 4 · Causa y consecuencia", sub: "porque, puesto que, por lo tanto, de ahí que + subjonctif", emoji: "🧩", c: "#FF6B35", d: "#D9531F",
+    desc: "Les subordonnées de cause et de conséquence : quand utiliser l'indicatif, et les deux pièges au subjonctif (no porque, de ahí que).",
+    fiche: () => `
+      <h3>1. La cause : indicatif</h3>
+      <p class="mt-1">Avec <b>porque, ya que, puesto que, dado que</b>, une cause <b>constatée</b> se met à l'<b>indicatif</b>. <b>Debido a</b> se construit avec un nom ou un infinitif.</p>
+      ${say("La recaudación disminuye puesto que un 50 % opera de forma informal.", "Les recettes baissent puisque 50 % opèrent de manière informelle.")}
+      <h3>2. Piège : no porque + subjonctif</h3>
+      <p class="mt-1">Pour <b>rejeter</b> une cause supposée : <b>no porque + SUBJONCTIF</b>, puis <b>sino</b>.</p>
+      ${say("Invierten en México no porque sea barato, sino por su posición estratégica.", "Ils investissent au Mexique non pas parce que c'est bon marché, mais pour sa position stratégique.")}
+      <h3>3. La conséquence : indicatif</h3>
+      <p class="mt-1"><b>por lo tanto, por consiguiente, así pues</b> + indicatif.</p>
+      ${say("La presión fiscal formal es muy alta; por lo tanto, deciden no registrarse.", "La pression fiscale formelle est très forte ; donc, ils décident de ne pas se déclarer.")}
+      <h3>4. Règle absolue : de ahí que + subjonctif</h3>
+      ${trap("<b>de ahí que</b> (d'où le fait que) impose <b>toujours le subjonctif</b>. L'indicatif est une faute.")}
+      ${say("Los costes logísticos son menores; de ahí que muchas firmas prefieran el territorio mexicano.", "Les coûts logistiques sont plus bas ; d'où le fait que beaucoup d'entreprises préfèrent le Mexique.")}
+      ${say("Persisten salarios bajos, de ahí que los sindicatos reclamen reformas.", "Les salaires restent bas, d'où le fait que les syndicats réclament des réformes.")}
+      ${defs([
+        ["Indicatif", "porque · ya que · puesto que · dado que · por lo tanto · por consiguiente · así pues"],
+        ["Subjonctif", "<b>no porque</b> (cause rejetée) · <b>de ahí que</b> (conséquence formelle)"]
+      ])}`,
+    outro: () => `<div class="mt-8"><h2 class="font-black text-lg">📌 À retenir du cours 4</h2>${defs([
+      ["Commerce", "Exporte des matières premières (soja, carne, litio, cobre, petróleo), importe des biens industriels (maquinaria, medicamentos, tecnología)."],
+      ["Informalité", "Plus de 130 M de travailleurs → peu de recaudación → déficit → pas de modernisation."],
+      ["UE-Mercosur", "Argentine, Brésil, Uruguay, Paraguay · ~800 M de consommateurs · −90 % d'aranceles · blocages : competencia desleal, deforestación · 1991 / 1999 / 2019"],
+      ["Nearshoring", "T-MEC (Mexique, USA, Canada) · 3 140 km de frontière · nord du Mexique · 24-48 h vers les USA"],
+      ["Grammaire", "Cause / conséquence constatée = indicatif · <b>no porque</b> et <b>de ahí que</b> = SUBJONCTIF"]
+    ])}</div>`,
+    ex: [
+      { t: "fill", sentence: "La recaudación disminuye ___ un 50 % opera de forma informal.", fr: "Les recettes baissent puisque 50 % opèrent de manière informelle.", options: ["puesto que", "de ahí que", "sin embargo", "por lo tanto"], explain: "On donne une <b>cause</b> constatée : <i>puesto que</i> + indicatif (<i>opera</i>)." },
+      { t: "mcq", prompt: "Après « <b>puesto que</b> » (cause constatée), on utilise…", options: ["l'indicatif", "le subjonctif", "toujours l'infinitif", "le conditionnel"], explain: "Une cause objective, constatée, se met à l'<b>indicatif</b>." },
+      { t: "fill", sentence: "Invierten en México no porque ___ barato, sino por su posición estratégica.", fr: "Ils investissent au Mexique non pas parce que c'est bon marché, mais pour sa position stratégique.", options: ["sea", "es", "era", "será"], explain: "Piège : <b>no porque + SUBJONCTIF</b> pour rejeter une cause. <i>ser</i> → <b>sea</b>." },
+      { t: "spot", words: ["Invierten", "no", "porque", "es", "barato,", "sino", "por", "su", "posición."], wrong: 3, fix: "Invierten no porque sea barato, sino por su posición.", explain: "Après <i>no porque</i>, le verbe passe au <b>subjonctif</b> : <i>sea</i>, pas <i>es</i>." },
+      { t: "fill", sentence: "Los costes logísticos son menores; de ahí que muchas firmas ___ México.", fr: "Les coûts logistiques sont plus bas ; d'où le fait que beaucoup d'entreprises préfèrent le Mexique.", options: ["prefieran", "prefieren", "preferir", "preferían"], explain: "Règle absolue : <b>de ahí que + subjonctif</b>. <i>preferir</i> → <i>prefieran</i>." },
+      { t: "spot", words: ["Persisten", "salarios", "bajos,", "de", "ahí", "que", "los", "sindicatos", "reclaman", "reformas."], wrong: 8, fix: "Persisten salarios bajos, de ahí que los sindicatos reclamen reformas.", explain: "Après <i>de ahí que</i> : <b>reclamen</b> (subjonctif), jamais <i>reclaman</i>." },
+      { t: "sort", prompt: "Ce connecteur se construit-il avec l'<b>indicatif</b> ou le <b>subjonctif</b> ?", cats: [IND, SUB], items: [{ t: "puesto que", c: "ind", en: 1 }, { t: "ya que", c: "ind", en: 1 }, { t: "por lo tanto", c: "ind", en: 1 }, { t: "por consiguiente", c: "ind", en: 1 }, { t: "de ahí que", c: "sub", en: 1 }, { t: "no porque", c: "sub", en: 1 }] },
+      { t: "fill", sentence: "La presión fiscal formal es muy alta; por lo tanto, ___ no registrarse.", fr: "La pression fiscale est très forte ; donc, ils décident de ne pas se déclarer.", options: ["deciden", "decidan", "decidir", "decidiendo"], explain: "<i>por lo tanto</i> exprime un résultat logique : <b>indicatif</b> (<i>deciden</i>)." },
+      { t: "mcq", prompt: "Quelle phrase est <b>correcte</b> ?", options: ["Los salarios son bajos, de ahí que los jóvenes no se emancipen.", "Los salarios son bajos, de ahí que los jóvenes no se emancipan.", "Los salarios son bajos, de ahí que los jóvenes no emanciparse.", "Los salarios son bajos, de ahí los jóvenes no se emancipan."], speakOpts: true, explain: "<i>de ahí que</i> + subjonctif : <b>se emancipen</b>." },
+      { t: "match", pairs: [["porque", "parce que"], ["puesto que", "puisque"], ["debido a", "en raison de (+ nom)"], ["por lo tanto", "donc"], ["de ahí que", "d'où le fait que (+ subjonctif)"]] },
+      { t: "order", fr: "Beaucoup d'entreprises choisissent le Mexique en raison de sa position stratégique.", answer: "Muchas firmas eligen México debido a su posición estratégica.", extra: ["que", "porque"] },
+      { t: "order", fr: "Les coûts sont plus bas, d'où le fait que les entreprises préfèrent le Mexique.", answer: "Los costes son menores, de ahí que las empresas prefieran México.", extra: ["prefieren", "porque"] }
+    ]
+  }
+);
 })();
