@@ -1,0 +1,13 @@
+# Ancienne version mono-fichier (gardée en local uniquement)
+index.monolithe.bak.html
+
+# Fichiers de test temporaires
+_test_bundle.html
+
+# Système / éditeurs
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
+.claude/

@@ -1,0 +1,97 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Révisions</title>
+<script src="https://cdn.tailwindcss.com/3.4.16"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+<script>
+tailwind.config = {
+  theme: { extend: {
+    fontFamily: { sans: ['Nunito', 'system-ui', 'sans-serif'] },
+    colors: { ink: '#4B4B4B', line: '#E5E5E5', duo: { green: '#58CC02', greenDark: '#58A700', red: '#FF4B4B', blue: '#1CB0F6', yellow: '#FFC800', orange: '#FF9600', purple: '#CE82FF' } }
+  } }
+};
+</script>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="antialiased">
+
+<!-- ============ HOME ============ -->
+<section id="home" class="min-h-[100dvh]">
+  <header class="sticky top-0 z-20 bg-white/95 backdrop-blur border-b-2 border-line">
+    <div class="max-w-xl mx-auto px-4 h-16 flex items-center justify-between gap-3">
+      <div id="courseSwitch" class="relative min-w-0">
+        <button id="courseBtn" type="button" class="flex items-center gap-2 max-w-full rounded-xl border-2 border-line border-b-4 px-2.5 py-1 font-black text-lg hover:bg-[#F7F7F7] active:translate-y-0.5" aria-haspopup="listbox" aria-expanded="false" aria-controls="courseMenu" title="Changer de matière">
+          <span id="courseIcon" class="text-2xl">💼</span>
+          <span id="courseTitle" class="truncate">Anglais</span>
+          <span class="text-ink/40 text-sm" aria-hidden="true">▼</span>
+        </button>
+        <div id="courseMenu" role="listbox" aria-label="Matières" class="hidden absolute left-0 top-full mt-2 w-72 max-w-[calc(100vw-2rem)] bg-white border-2 border-line rounded-2xl shadow-lg p-2 space-y-1"></div>
+      </div>
+      <div class="flex items-center gap-3 shrink-0">
+        <div class="flex items-center gap-1 font-extrabold text-duo-orange" title="XP total"><span>⚡</span><span id="xpTotal">0</span></div>
+        <button id="muteBtn" class="w-10 h-10 rounded-xl border-2 border-line text-lg" aria-label="Activer / couper le son">🔊</button>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-xl mx-auto px-4 pb-16">
+    <div id="banner" class="mt-6 rounded-2xl p-5 text-white flex items-center justify-between gap-4" style="background:var(--green);box-shadow:0 5px 0 var(--green-d)">
+      <div>
+        <div id="unitLabel" class="uppercase text-xs font-extrabold tracking-wider opacity-80"></div>
+        <h1 id="unitTitle" class="text-2xl font-black leading-tight"></h1>
+        <p id="unitSub" class="text-sm font-semibold opacity-90"></p>
+      </div>
+      <button id="guideBtn" class="shrink-0 rounded-xl border-2 border-white/40 px-3 py-2 font-extrabold text-sm hover:bg-white/10">📖 Fiche<br class="sm:hidden"> complète</button>
+    </div>
+
+    <div id="path" class="relative mt-14 flex flex-col items-center gap-14"></div>
+
+    <div id="resetWrap" class="mt-16 text-center">
+      <button id="resetBtn" class="text-sm font-bold text-ink/50 hover:text-duo-red underline underline-offset-4">Réinitialiser ma progression</button>
+    </div>
+  </main>
+</section>
+
+<!-- ============ LESSON ============ -->
+<section id="lesson" class="hidden h-[100dvh] flex-col">
+  <div class="max-w-3xl w-full mx-auto px-4 pt-5 pb-2 flex items-center gap-4">
+    <button id="quitBtn" class="text-3xl leading-none text-ink/40 hover:text-ink" aria-label="Quitter la leçon">✕</button>
+    <div id="bar" class="progress flex-1"><div style="width:0%"></div></div>
+    <div id="hearts" class="flex items-center gap-0.5" aria-label="Vies"></div>
+  </div>
+  <main class="flex-1 overflow-y-auto">
+    <div id="stage" class="max-w-2xl mx-auto px-4 py-6"></div>
+  </main>
+  <footer id="footer" class="border-t-2 border-line transition-colors" role="status" aria-live="polite">
+    <div class="max-w-3xl mx-auto px-4 py-4 sm:py-6 flex flex-col sm:flex-row gap-4 sm:items-center sm:justify-between">
+      <div id="fb" class="flex-1 min-w-0"></div>
+      <button id="mainBtn" class="btn btn-green w-full sm:w-auto" disabled>Vérifier</button>
+    </div>
+  </footer>
+</section>
+
+<!-- ============ RESULT ============ -->
+<section id="result" class="hidden min-h-[100dvh]">
+  <div id="resultInner" class="max-w-xl mx-auto px-4 py-10"></div>
+</section>
+
+<!-- ============ MODAL ============ -->
+<div id="modal" class="hidden fixed inset-0 z-40 bg-black/40 flex items-end sm:items-center justify-center p-0 sm:p-4">
+  <div id="modalPanel" class="slide-up bg-white w-full sm:max-w-2xl rounded-t-3xl sm:rounded-3xl max-h-[88dvh] overflow-y-auto p-5 sm:p-7"></div>
+</div>
+
+<canvas id="confetti" class="fixed inset-0 pointer-events-none z-50"></canvas>
+
+<!-- Scripts classiques (pas de modules) : fonctionne en double-clic, sans serveur -->
+<script src="data/courses.js"></script>
+<script src="data/anglais.js"></script>
+<script src="data/politique-economique.js"></script>
+<script src="data/sociologie.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
